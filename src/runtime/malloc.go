@@ -612,8 +612,8 @@ func mallocgc(size uintptr, typ *_type, needzero bool) unsafe.Pointer {
 	c := gomcache()
 	var x unsafe.Pointer
 	noscan := typ == nil || typ.kind&kindNoPointers != 0
-	if size <= maxSmallSize {
-		if noscan && size < maxTinySize {
+	if size <= maxSmallSize { // 32k
+		if noscan && size < maxTinySize { // 16
 			// Tiny allocator.
 			//
 			// Tiny allocator combines several tiny allocation requests
@@ -662,7 +662,7 @@ func mallocgc(size uintptr, typ *_type, needzero bool) unsafe.Pointer {
 				return x
 			}
 			// Allocate a new maxTinySize block.
-			span := c.alloc[tinySizeClass]
+			span := c.alloc[tinySizeClass] // 2
 			v := nextFreeFast(span)
 			if v == 0 {
 				v, _, shouldhelpgc = c.nextFree(tinySizeClass)
@@ -676,13 +676,13 @@ func mallocgc(size uintptr, typ *_type, needzero bool) unsafe.Pointer {
 				c.tiny = uintptr(x)
 				c.tinyoffset = size
 			}
-			size = maxTinySize
+			size = maxTinySize // 16
 		} else {
 			var sizeclass uint8
-			if size <= smallSizeMax-8 {
-				sizeclass = size_to_class8[(size+smallSizeDiv-1)/smallSizeDiv]
+			if size <= smallSizeMax-8 { // 1024 - 8
+				sizeclass = size_to_class8[(size+smallSizeDiv-1)/smallSizeDiv] // smallSizeDiv = 8
 			} else {
-				sizeclass = size_to_class128[(size-smallSizeMax+largeSizeDiv-1)/largeSizeDiv]
+				sizeclass = size_to_class128[(size-smallSizeMax+largeSizeDiv-1)/largeSizeDiv] // largeSizeDiv = 128
 			}
 			size = uintptr(class_to_size[sizeclass])
 			span := c.alloc[sizeclass]

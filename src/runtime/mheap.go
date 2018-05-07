@@ -200,7 +200,7 @@ type mspan struct {
 	// ctz (count trailing zero) to use it directly.
 	// allocCache may contain bits beyond s.nelems; the caller must ignore
 	// these.
-	allocCache uint64
+	allocCache uint64 // 1 means free
 
 	// allocBits and gcmarkBits hold pointers to a span's mark and
 	// allocation bits. The pointers are 8 byte aligned.
@@ -224,7 +224,7 @@ type mspan struct {
 	// The sweep will free the old allocBits and set allocBits to the
 	// gcmarkBits. The gcmarkBits are replaced with a fresh zeroed
 	// out memory.
-	allocBits  *uint8
+	allocBits  *uint8 // 1 means free
 	gcmarkBits *uint8
 
 	// sweep generation:

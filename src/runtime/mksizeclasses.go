@@ -104,7 +104,7 @@ func makeClasses() []class {
 	classes = append(classes, class{}) // class #0 is a dummy entry
 
 	align := 8
-	for size := align; size <= maxSmallSize; size += align {
+	for size := align; size <= maxSmallSize; size += align { // maxSmallSize = 32k
 		if powerOfTwo(size) { // bump alignment once in a while
 			if size >= 2048 {
 				align = 256
@@ -290,7 +290,7 @@ func printClasses(w io.Writer, classes []class) {
 	fmt.Fprintln(w, "}")
 
 	// map from size to size class, for small sizes.
-	sc := make([]int, smallSizeMax/smallSizeDiv+1)
+	sc := make([]int, smallSizeMax/smallSizeDiv+1) // 1024 / 8 + 1
 	for i := range sc {
 		size := i * smallSizeDiv
 		for j, c := range classes {
@@ -307,7 +307,7 @@ func printClasses(w io.Writer, classes []class) {
 	fmt.Fprintln(w, "}")
 
 	// map from size to size class, for large sizes.
-	sc = make([]int, (maxSmallSize-smallSizeMax)/largeSizeDiv+1)
+	sc = make([]int, (maxSmallSize-smallSizeMax)/largeSizeDiv+1) // (32k - 1k) / 128 + 1
 	for i := range sc {
 		size := smallSizeMax + i*largeSizeDiv
 		for j, c := range classes {

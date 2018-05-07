@@ -1647,7 +1647,7 @@ retry:
 	lock(&sched.lock)
 	mput(_g_.m)
 	unlock(&sched.lock)
-	notesleep(&_g_.m.park)
+	notesleep(&_g_.m.park) // the M is hold here, until notewake
 	noteclear(&_g_.m.park)
 	if _g_.m.helpgc != 0 {
 		gchelper()

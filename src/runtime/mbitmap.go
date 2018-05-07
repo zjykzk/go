@@ -165,8 +165,8 @@ func (h *mheap) mapBits(arena_used uintptr) {
 // can more easily inline calls to those methods and registerize the
 // struct fields independently.
 type heapBits struct {
-	bitp  *uint8
-	shift uint32
+	bitp  *uint8 // address in the mheap.bitmap
+	shift uint32 // the shift in one byte
 }
 
 // markBits provides access to the mark bit for an object in the heap.
